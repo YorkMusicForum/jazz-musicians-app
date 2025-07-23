@@ -14,16 +14,14 @@
     }
     header {
       text-align: center;
-      padding: 1.5rem;
+      padding: 1rem;
     }
     header img {
-      max-width: 180px;
-      display: block;
-      margin: 0 auto 1rem;
+      max-width: 140px;
     }
     h1 {
       font-family: 'ABeeZee', sans-serif;
-      font-size: 2.5rem;
+      font-size: 2.2rem;
       color: #8b1453;
       margin-bottom: 0.5rem;
     }
@@ -152,7 +150,7 @@
         <h3>${musician.Name}</h3>
         <p><strong>Instrument/Role:</strong> ${musician["Instrument/Role"]}</p>
         <p><strong>Genre/Style:</strong> ${musician["Genre/Style"]}</p>
-        <p><strong>Era:</strong> ${musician.Era}</p>
+        <p><strong>Era:</strong> ${musician["Era"]}</p>
         <p>${musician.Description}</p>
         <p><strong>Notable Recordings:</strong> ${musician["Notable Recordings"]}</p>
         ${musician["Spotify Link"] ? `<p><a href="${musician["Spotify Link"]}" target="_blank">Listen on Spotify</a></p>` : ""}
@@ -169,7 +167,7 @@
       container.innerHTML = "";
 
       const filtered = data.filter(d =>
-        (!era || d.Era === era) &&
+        (!era || d["Era"] === era) &&
         (!instrument || d["Instrument/Role"] === instrument) &&
         (!genre || d["Genre/Style"] === genre)
       );
