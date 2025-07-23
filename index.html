@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Library of Important Jazz Musicians</title>
-  <link href="https://fonts.googleapis.com/css2?family=ABeeZee&family=Muli&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=ABeeZee&family=Muli&display=swap" rel="stylesheet" />
   <style>
     body {
       font-family: 'Muli', sans-serif;
@@ -14,14 +14,16 @@
     }
     header {
       text-align: center;
-      padding: 1rem;
+      padding: 1.5rem;
     }
     header img {
-      max-width: 160px;
+      max-width: 180px;
+      display: block;
+      margin: 0 auto 1rem;
     }
     h1 {
       font-family: 'ABeeZee', sans-serif;
-      font-size: 2.2rem;
+      font-size: 2.5rem;
       color: #8b1453;
       margin-bottom: 0.5rem;
     }
@@ -31,12 +33,10 @@
     .donate a {
       background: #8b1453;
       color: white;
-      padding: 0.6rem 1.4rem;
+      padding: 0.6rem 1.2rem;
       border-radius: 8px;
       text-decoration: none;
       font-weight: bold;
-      font-size: 1rem;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
     }
     .filters {
       display: flex;
@@ -125,9 +125,9 @@
       const response = await fetch(path);
       const text = await response.text();
       const lines = text.split("\n").filter(line => line.trim().length > 0);
-      const headers = lines[0].split(",").map(h => h.trim().replace(/"/g, ""));
+      const headers = lines[0].split("\t").map(h => h.trim().replace(/"/g, ""));
       return lines.slice(1).map(line => {
-        const values = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.trim().replace(/^"|"$/g, ""));
+        const values = line.split("\t").map(v => v.trim().replace(/^"|"$/g, ""));
         const entry = {};
         headers.forEach((h, i) => entry[h] = values[i]);
         return entry;
@@ -181,7 +181,7 @@
     }
 
     document.addEventListener("DOMContentLoaded", async () => {
-      const musicians = await loadCSV("data/jazz_musicians.csv");
+      const musicians = await loadCSV("data/important_jazz_musicians_batch_1.csv");
 
       populateFilterOptions(musicians, "Era", "eraFilter");
       populateFilterOptions(musicians, "Instrument/Role", "instrumentFilter");
