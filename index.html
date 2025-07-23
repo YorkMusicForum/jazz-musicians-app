@@ -22,14 +22,14 @@
     h1 {
       font-family: 'ABeeZee', sans-serif;
       font-size: 2rem;
-      color: #8b1453;
+      color: purple;
       margin-bottom: 0.5rem;
     }
     .donate {
       margin-top: 0.5rem;
     }
     .donate a {
-      background: #8b1453;
+      background: purple;
       color: white;
       padding: 0.6rem 1.2rem;
       border-radius: 8px;
@@ -73,7 +73,7 @@
     }
     .card h3 {
       font-family: 'ABeeZee', sans-serif;
-      color: #8b1453;
+      color: purple;
       margin-top: 0;
     }
     .card p {
@@ -102,11 +102,11 @@
     <select id="eraFilter">
       <option value="">All Eras</option>
     </select>
-    <select id="instrumentFilter">
-      <option value="">All Instruments</option>
-    </select>
     <select id="genreFilter">
       <option value="">All Genres</option>
+    </select>
+    <select id="instrumentFilter">
+      <option value="">All Instruments</option>
     </select>
   </section>
 
@@ -149,8 +149,8 @@
       card.innerHTML = `
         <h3>${musician.Name}</h3>
         <p><strong>Instrument/Role:</strong> ${musician["Instrument/Role"]}</p>
-        <p><strong>Genre/Style:</strong> ${musician["Genre/Style"]}</p>
         <p><strong>Era:</strong> ${musician.Era}</p>
+        <p><strong>Genre/Style:</strong> ${musician["Genre/Style"]}</p>
         <p>${musician.Description}</p>
         <p><strong>Notable Recordings:</strong> ${musician["Notable Recordings"]}</p>
       `;
