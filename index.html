@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Library of Important Jazz Musicians</title>
+  <link href="https://fonts.googleapis.com/css2?family=ABeeZee&family=Muli&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Muli', sans-serif;
+      margin: 0;
+      background-color: #fff;
+      color: #000;
+    }
+    header {
+      text-align: center;
+      padding: 1rem;
+    }
+    header img {
+      max-width: 120px;
+    }
+    h1 {
+      font-family: 'ABeeZee', sans-serif;
+      font-size: 2rem;
+      color: purple;
+      margin-bottom: 0.5rem;
+    }
+    .donate {
+      margin-top: 0.5rem;
+    }
+    .donate a {
+      background: purple;
+      color: white;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      margin: 1rem;
+    }
+    select {
+      padding: 0.4rem;
+      font-size: 1rem;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      padding: 1rem;
+      max-width: 1200px;
+      margin: auto;
+    }
+    .card {
+      background: #f9f9f9;
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeIn 0.6s forwards;
+    }
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .card h3 {
+      font-family: 'ABeeZee', sans-serif;
+      color: purple;
+      margin-top: 0;
+    }
+    .card p {
+      margin: 0.5rem 0;
+    }
+    footer {
+      text-align: center;
+      font-size: 0.9rem;
+      padding: 1.5rem;
+      margin-top: 2rem;
+      border-top: 1px solid #ccc;
+      background: #fafafa;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="ymf-logo.png" alt="York Music Forum Logo" />
+    <h1>Library of Important Jazz Musicians</h1>
+    <div class="donate">
+      <a href="https://buy.stripe.com/5kA2aJ0bCgHFfC05km" target="_blank">Donate</a>
+    </div>
+  </header>
+
+  <section class="filters">
+    <select id="eraFilter">
+      <option value="">All Eras</option>
+    </select>
+    <select id="instrumentFilter">
+      <option value="">All Instruments</option>
+    </select>
+    <select id="genreFilter">
+      <option value="">All Genres</option>
+    </select>
+  </section>
+
+  <section class="container" id="musiciansContainer">
+    <!-- Musician cards will go here -->
+  </section>
+
+  <footer>
+    Built by York Music Forum – Jazz Education, Built Around You
+  </footer>
+
+  <script>
+    async function loadCSV(path) {
+      const response = await fetch(path);
+      const text = await response.text();
+      const lines = text.split("\n").filter(line => line.trim().length > 0);
+      const headers = lines[0].split(",").map(h => h.trim().replace(/"/g, ""));
+      return lines.slice(1).map(line => {
+        const values = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.trim().replace(/^"|"$/g, ""));
+        const entry = {};
+        headers.forEach((h, i) => entry[h] = values[i]);
+        return entry;
+      });
+    }
+
+    function populateFilterOptions(data, key, selectId) {
+      const options = [...new Set(data.map(d => d[key]).filter(Boolean))].sort();
+      const select = document.getElementById(selectId);
+      options.forEach(opt => {
+        const option = document.createElement("option");
+        option.value = opt;
+        option.textContent = opt;
+        select.appendChild(option);
+      });
+    }
+
+    function createCard(musician) {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <h3>${musician.Name}</h3>
+        <p><strong>Instrument/Role:</strong> ${musician["Instrument/Role"]}</p>
+        <p><strong>Genre/Style:</strong> ${musician["Genre/Style"]}</p>
+        <p><strong>Era:</strong> ${musician.Era}</p>
+        <p>${musician.Description}</p>
+        <p><strong>Notable Recordings:</strong> ${musician["Notable Recordings"]}</p>
+      `;
+      return card;
+    }
+
+    function filterAndDisplay(data) {
+      const era = document.getElementById("eraFilter").value;
+      const instrument = document.getElementById("instrumentFilter").value;
+      const genre = document.getElementById("genreFilter").value;
+
+      const container = document.getElementById("musiciansContainer");
+      container.innerHTML = "";
+
+      const filtered = data.filter(d =>
+        (!era || d.Era === era) &&
+        (!instrument || d["Instrument/Role"] === instrument) &&
+        (!genre || d["Genre/Style"] === genre)
+      );
+
+      filtered.forEach(musician => {
+        const card = createCard(musician);
+        container.appendChild(card);
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      const musicians = await loadCSV("data/jazz_musicians.csv");
+
+      populateFilterOptions(musicians, "Era", "eraFilter");
+      populateFilterOptions(musicians, "Instrument/Role", "instrumentFilter");
+      populateFilterOptions(musicians, "Genre/Style", "genreFilter");
+
+      document.querySelectorAll("select").forEach(sel => {
+        sel.addEventListener("change", () => filterAndDisplay(musicians));
+      });
+
+      filterAndDisplay(musicians);
+    });
+  </script>
+</body>
+</html>
