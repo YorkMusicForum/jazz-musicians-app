@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Library of Important Jazz Musicians</title>
   <link href="https://fonts.googleapis.com/css2?family=ABeeZee&family=Muli&display=swap" rel="stylesheet" />
   <style>
@@ -21,7 +21,7 @@
     }
     h1 {
       font-family: 'ABeeZee', sans-serif;
-      font-size: 2.2rem;
+      font-size: 2rem;
       color: #8b1453;
       margin-bottom: 0.5rem;
     }
@@ -79,6 +79,13 @@
     .card p {
       margin: 0.5rem 0;
     }
+    .card a.spotify-link {
+      display: inline-block;
+      margin-top: 0.5rem;
+      color: #8b1453;
+      font-weight: bold;
+      text-decoration: underline;
+    }
     footer {
       text-align: center;
       font-size: 0.9rem;
@@ -111,7 +118,7 @@
   </section>
 
   <section class="container" id="musiciansContainer">
-    <!-- Musician cards will go here -->
+    <!-- Cards inserted here -->
   </section>
 
   <footer>
@@ -123,9 +130,9 @@
       const response = await fetch(path);
       const text = await response.text();
       const lines = text.split("\n").filter(line => line.trim().length > 0);
-      const headers = lines[0].split("\t").map(h => h.trim().replace(/"/g, ""));
+      const headers = lines[0].split(",").map(h => h.trim().replace(/"/g, ""));
       return lines.slice(1).map(line => {
-        const values = line.split("\t").map(v => v.trim().replace(/^"|"$/g, ""));
+        const values = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.trim().replace(/^"|"$/g, ""));
         const entry = {};
         headers.forEach((h, i) => entry[h] = values[i]);
         return entry;
@@ -147,13 +154,13 @@
       const card = document.createElement("div");
       card.className = "card";
       card.innerHTML = `
-        <h3>${musician.Name}</h3>
+        <h3>${musician["Name"]}</h3>
         <p><strong>Instrument/Role:</strong> ${musician["Instrument/Role"]}</p>
         <p><strong>Genre/Style:</strong> ${musician["Genre/Style"]}</p>
         <p><strong>Era:</strong> ${musician["Era"]}</p>
-        <p>${musician.Description}</p>
+        <p>${musician["Description"]}</p>
         <p><strong>Notable Recordings:</strong> ${musician["Notable Recordings"]}</p>
-        ${musician["Spotify Link"] ? `<p><a href="${musician["Spotify Link"]}" target="_blank">Listen on Spotify</a></p>` : ""}
+        ${musician["Spotify Link"] ? `<a class="spotify-link" href="${musician["Spotify Link"]}" target="_blank">Listen on Spotify</a>` : ""}
       `;
       return card;
     }
@@ -194,3 +201,4 @@
   </script>
 </body>
 </html>
+  
