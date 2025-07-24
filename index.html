@@ -2,270 +2,199 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Library of Important Jazz Musicians - York Music Forum</title>
-
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Abeezee&family=Muli&display=swap" rel="stylesheet" />
-
-  <!-- Styles -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Library of Important Jazz Musicians</title>
+  <link href="https://fonts.googleapis.com/css2?family=ABeeZee&family=Muli&display=swap" rel="stylesheet"/>
   <style>
     body {
       font-family: 'Muli', sans-serif;
-      background: #fff;
-      color: #000;
       margin: 0;
-      padding: 0 1rem 3rem 1rem;
-      max-width: 900px;
-      margin-left: auto;
-      margin-right: auto;
+      background-color: #fff;
+      color: #000;
     }
     header {
       text-align: center;
-      padding: 1rem 0;
+      padding: 1rem;
     }
     header img {
-      max-height: 80px;
-      margin-bottom: 1rem;
+      max-width: 160px;
+      margin-bottom: 0.5rem;
     }
     h1 {
-      font-family: 'Abeezee', sans-serif;
-      color: #6a0dad; /* purple from YMF logo */
-      margin-bottom: 0;
+      font-family: 'ABeeZee', sans-serif;
+      font-size: 2rem;
+      color: #8b1453;
+      margin-bottom: 0.5rem;
     }
-    h2 {
-      font-family: 'Abeezee', sans-serif;
-      color: #6a0dad;
-      margin-top: 1.5rem;
+    .donate {
+      margin-top: 0.5rem;
     }
-    .donate-button {
-      display: inline-block;
-      margin: 1rem auto;
-      padding: 0.5rem 1rem;
-      background: #6a0dad;
-      color: #fff;
-      border-radius: 4px;
+    .donate a {
+      background: #8b1453;
+      color: white;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
       text-decoration: none;
       font-weight: bold;
-      font-family: 'Abeezee', sans-serif;
-      cursor: pointer;
     }
     .filters {
       display: flex;
-      gap: 1rem;
       flex-wrap: wrap;
-      margin-bottom: 1rem;
       justify-content: center;
+      gap: 1rem;
+      margin: 1rem;
     }
-    select, input[type="search"] {
-      padding: 0.3rem 0.6rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+    select {
+      padding: 0.4rem;
       font-size: 1rem;
-      min-width: 150px;
     }
-    .musician-card {
-      border-bottom: 1px solid #ddd;
-      padding: 1rem 0;
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      padding: 1rem;
+      max-width: 1200px;
+      margin: auto;
     }
-    .musician-name {
-      font-family: 'Abeezee', sans-serif;
-      font-size: 1.3rem;
-      margin: 0 0 0.3rem 0;
-      color: #6a0dad;
+    .card {
+      background: #f9f9f9;
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeIn 0.6s forwards;
     }
-    .musician-meta {
-      font-style: italic;
-      font-size: 0.9rem;
-      margin-bottom: 0.6rem;
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
-    .musician-description {
-      margin-bottom: 0.5rem;
-      line-height: 1.4;
+    .card h3 {
+      font-family: 'ABeeZee', sans-serif;
+      color: #8b1453;
+      margin-top: 0;
     }
-    .musician-recordings {
-      margin-bottom: 0.3rem;
+    .card p {
+      margin: 0.4rem 0;
     }
     .spotify-link {
-      color: #1DB954; /* Spotify green */
+      margin-top: 0.5rem;
+      display: inline-block;
+      background: #1DB954;
+      color: white;
+      padding: 0.3rem 0.7rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
       text-decoration: none;
-      font-weight: bold;
     }
     footer {
       text-align: center;
-      margin-top: 3rem;
-      font-size: 0.8rem;
-      color: #666;
+      font-size: 0.9rem;
+      padding: 1.5rem;
+      margin-top: 2rem;
+      border-top: 1px solid #ccc;
+      background: #fafafa;
     }
   </style>
 </head>
 <body>
   <header>
-    <!-- Replace src with your YMF logo path -->
-    <img src="images/ymf-logo.png" alt="York Music Forum Logo" />
+    <img src="ymf-logo.png" alt="York Music Forum Logo"/>
     <h1>Library of Important Jazz Musicians</h1>
-    <a class="donate-button" href="https://buy.stripe.com/5kA2aJ0bCgHFfC05km" target="_blank" rel="noopener noreferrer">Donate to YMF</a>
+    <div class="donate">
+      <a href="https://buy.stripe.com/5kA2aJ0bCgHFfC05km" target="_blank">Donate</a>
+    </div>
   </header>
 
-  <section class="filters" aria-label="Filters for musicians">
-    <input type="search" id="searchInput" placeholder="Search by name or keyword..." aria-label="Search musicians" />
-    <select id="eraFilter" aria-label="Filter by Era">
-      <option value="">All Eras</option>
-    </select>
-    <select id="instrumentFilter" aria-label="Filter by Instrument or Role">
-      <option value="">All Instruments / Roles</option>
-    </select>
-    <select id="genreFilter" aria-label="Filter by Genre or Style">
-      <option value="">All Genres / Styles</option>
-    </select>
+  <section class="filters">
+    <select id="eraFilter"><option value="">All Eras</option></select>
+    <select id="genreFilter"><option value="">All Genres</option></select>
+    <select id="instrumentFilter"><option value="">All Instruments</option></select>
   </section>
 
-  <main id="musicianList" aria-live="polite" aria-relevant="additions"></main>
+  <section class="container" id="musiciansContainer">
+    <!-- Cards will be inserted here -->
+  </section>
 
   <footer>
-    <p>York Music Forum © 2025. All rights reserved.</p>
+    Built by York Music Forum – Jazz Education, Built Around You
   </footer>
 
-  <!-- PapaParse CSV parser library -->
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-
   <script>
-    // Global data array
-    let musicians = [];
+    async function loadCSV(path) {
+      const response = await fetch(path);
+      const text = await response.text();
+      const lines = text.split("\n").filter(line => line.trim());
+      const headers = lines[0].split(",").map(h => h.trim().replace(/"/g, ""));
+      return lines.slice(1).map(line => {
+        const values = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.trim().replace(/^"|"$/g, ""));
+        const entry = {};
+        headers.forEach((h, i) => entry[h] = values[i]);
+        return entry;
+      });
+    }
 
-    // Elements
-    const musicianList = document.getElementById('musicianList');
-    const searchInput = document.getElementById('searchInput');
-    const eraFilter = document.getElementById('eraFilter');
-    const instrumentFilter = document.getElementById('instrumentFilter');
-    const genreFilter = document.getElementById('genreFilter');
+    function populateFilterOptions(data, key, selectId) {
+      const options = [...new Set(data.map(d => d[key]).filter(Boolean))].sort();
+      const select = document.getElementById(selectId);
+      options.forEach(opt => {
+        const option = document.createElement("option");
+        option.value = opt;
+        option.textContent = opt;
+        select.appendChild(option);
+      });
+    }
 
-    // Load CSV file
-    Papa.parse('data/important_jazz_musicians_batch_1_cleaned.csv', {
-      header: true,
-      download: true,
-      complete: function(results) {
-        musicians = results.data.filter(m => m.Name); // filter out empty rows
-        populateFilters();
-        renderMusicians(musicians);
-      }
+    function createCard(musician) {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <h3>${musician["Name"]}</h3>
+        <p><strong>Instrument/Role:</strong> ${musician["Instrument/Role"]}</p>
+        <p><strong>Genre/Style:</strong> ${musician["Genre/Style"]}</p>
+        <p><strong>Era:</strong> ${musician["Era"]}</p>
+        <p>${musician["Description"]}</p>
+        <p><strong>Notable Recordings:</strong> ${musician["Notable Recordings"]}</p>
+        ${musician["Spotify Link"] ? `<a class="spotify-link" href="${musician["Spotify Link"]}" target="_blank">Listen on Spotify</a>` : ""}
+      `;
+      return card;
+    }
+
+    function filterAndDisplay(data) {
+      const era = document.getElementById("eraFilter").value;
+      const instrument = document.getElementById("instrumentFilter").value;
+      const genre = document.getElementById("genreFilter").value;
+      const container = document.getElementById("musiciansContainer");
+      container.innerHTML = "";
+
+      const filtered = data.filter(d =>
+        (!era || d["Era"] === era) &&
+        (!instrument || d["Instrument/Role"] === instrument) &&
+        (!genre || d["Genre/Style"] === genre)
+      );
+
+      filtered.forEach(musician => {
+        const card = createCard(musician);
+        container.appendChild(card);
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      const musicians = await loadCSV("data/important_jazz_musicians_batch_1_cleaned.csv");
+
+      populateFilterOptions(musicians, "Era", "eraFilter");
+      populateFilterOptions(musicians, "Instrument/Role", "instrumentFilter");
+      populateFilterOptions(musicians, "Genre/Style", "genreFilter");
+
+      document.querySelectorAll("select").forEach(sel => {
+        sel.addEventListener("change", () => filterAndDisplay(musicians));
+      });
+
+      filterAndDisplay(musicians);
     });
-
-    // Populate filter dropdowns with unique values
-    function populateFilters() {
-      const eras = new Set();
-      const instruments = new Set();
-      const genres = new Set();
-
-      musicians.forEach(m => {
-        if(m.Era) eras.add(m.Era.trim());
-        if(m['Instrument/Role']) instruments.add(m['Instrument/Role'].trim());
-        if(m['Genre/Style']) genres.add(m['Genre/Style'].trim());
-      });
-
-      // Helper to add options
-      function addOptions(select, options) {
-        Array.from(options).sort().forEach(option => {
-          const opt = document.createElement('option');
-          opt.value = option;
-          opt.textContent = option;
-          select.appendChild(opt);
-        });
-      }
-
-      addOptions(eraFilter, eras);
-      addOptions(instrumentFilter, instruments);
-      addOptions(genreFilter, genres);
-    }
-
-    // Render musician cards filtered by user inputs
-    function renderMusicians(list) {
-      musicianList.innerHTML = '';
-
-      if(list.length === 0) {
-        musicianList.innerHTML = '<p>No musicians found matching your criteria.</p>';
-        return;
-      }
-
-      list.forEach(m => {
-        const card = document.createElement('article');
-        card.className = 'musician-card';
-
-        // Name
-        const name = document.createElement('h2');
-        name.className = 'musician-name';
-        name.textContent = m.Name;
-        card.appendChild(name);
-
-        // Meta info (Instrument, Era, Genre)
-        const meta = document.createElement('div');
-        meta.className = 'musician-meta';
-        meta.textContent = 
-          (m['Instrument/Role'] ? m['Instrument/Role'] + ' | ' : '') +
-          (m.Era ? m.Era + ' | ' : '') +
-          (m['Genre/Style'] ? m['Genre/Style'] : '');
-        card.appendChild(meta);
-
-        // Description
-        if(m.Description) {
-          const desc = document.createElement('p');
-          desc.className = 'musician-description';
-          desc.textContent = m.Description;
-          card.appendChild(desc);
-        }
-
-        // Notable Recordings
-        if(m['Notable Recordings']) {
-          const rec = document.createElement('p');
-          rec.className = 'musician-recordings';
-          rec.innerHTML = '<strong>Notable Recordings:</strong> ' + m['Notable Recordings'];
-          card.appendChild(rec);
-        }
-
-        // Spotify link
-        if(m['Spotify Link']) {
-          const link = document.createElement('a');
-          link.href = m['Spotify Link'];
-          link.target = '_blank';
-          link.rel = 'noopener noreferrer';
-          link.className = 'spotify-link';
-          link.textContent = 'Listen on Spotify';
-          card.appendChild(link);
-        }
-
-        musicianList.appendChild(card);
-      });
-    }
-
-    // Filter function
-    function filterMusicians() {
-      const searchTerm = searchInput.value.toLowerCase();
-      const eraVal = eraFilter.value;
-      const instrumentVal = instrumentFilter.value;
-      const genreVal = genreFilter.value;
-
-      const filtered = musicians.filter(m => {
-        // Search by name or any field text (simple)
-        const searchableText = (m.Name + ' ' + (m.Description || '') + ' ' + (m['Notable Recordings'] || '')).toLowerCase();
-
-        const matchesSearch = searchableText.includes(searchTerm);
-
-        const matchesEra = eraVal ? m.Era === eraVal : true;
-        const matchesInstrument = instrumentVal ? m['Instrument/Role'] === instrumentVal : true;
-        const matchesGenre = genreVal ? m['Genre/Style'] === genreVal : true;
-
-        return matchesSearch && matchesEra && matchesInstrument && matchesGenre;
-      });
-
-      renderMusicians(filtered);
-    }
-
-    // Event listeners for filtering
-    searchInput.addEventListener('input', filterMusicians);
-    eraFilter.addEventListener('change', filterMusicians);
-    instrumentFilter.addEventListener('change', filterMusicians);
-    genreFilter.addEventListener('change', filterMusicians);
-
   </script>
 </body>
 </html>
