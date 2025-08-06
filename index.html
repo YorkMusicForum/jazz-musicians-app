@@ -1,208 +1,141 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>Library of Important Jazz Musicians</title>
-  <link href="https://fonts.googleapis.com/css2?family=ABeeZee&family=Muli&display=swap" rel="stylesheet" />
   <style>
     body {
-      font-family: 'Muli', sans-serif;
-      margin: 0;
-      background-color: #fff;
+      font-family: Arial, sans-serif;
+      background: #fff;
       color: #000;
-    }
-    header {
-      text-align: center;
-      padding: 1rem;
-    }
-    header img {
-      max-width: 140px;
+      margin: 20px;
     }
     h1 {
-      font-family: 'ABeeZee', sans-serif;
-      font-size: 2rem;
       color: #8b1453;
-      margin-bottom: 0.5rem;
-    }
-    .donate {
-      margin-top: 0.5rem;
-    }
-    .donate a {
-      background: #8b1453;
-      color: white;
-      padding: 0.6rem 1.2rem;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: bold;
+      text-align: center;
     }
     .filters {
+      margin-bottom: 20px;
       display: flex;
+      gap: 10px;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 1rem;
-      margin: 1rem;
     }
     select {
-      padding: 0.4rem;
-      font-size: 1rem;
+      padding: 5px;
     }
-    .container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.5rem;
-      padding: 1rem;
-      max-width: 1200px;
-      margin: auto;
+    .musician {
+      border: 1px solid #ddd;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 8px;
     }
-    .card {
-      background: #f9f9f9;
-      padding: 1rem;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      transition: transform 0.3s ease, opacity 0.3s ease;
-      opacity: 0;
-      transform: translateY(20px);
-      animation: fadeIn 0.6s forwards;
-    }
-    @keyframes fadeIn {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    .card h3 {
-      font-family: 'ABeeZee', sans-serif;
+    .musician h2 {
+      margin: 0;
       color: #8b1453;
-      margin-top: 0;
     }
-    .card p {
-      margin: 0.5rem 0;
-    }
-    .card a.spotify {
-      display: inline-block;
-      margin-top: 0.5rem;
-      padding: 0.4rem 0.8rem;
-      background-color: #1DB954;
-      color: white;
-      text-decoration: none;
-      border-radius: 6px;
-      font-weight: bold;
-      font-size: 0.9rem;
-    }
-    footer {
-      text-align: center;
-      font-size: 0.9rem;
-      padding: 1.5rem;
-      margin-top: 2rem;
-      border-top: 1px solid #ccc;
-      background: #fafafa;
+    .spotify a {
+      color: #8b1453;
     }
   </style>
 </head>
 <body>
-  <header>
-    <img src="ymf-logo.png" alt="York Music Forum Logo" />
-    <h1>Library of Important Jazz Musicians</h1>
-    <div class="donate">
-      <a href="https://buy.stripe.com/5kA2aJ0bCgHFfC05km" target="_blank">Donate</a>
-    </div>
-  </header>
 
-  <section class="filters">
-    <select id="eraFilter">
-      <option value="">All Eras</option>
-    </select>
-    <select id="genreFilter">
-      <option value="">All Genres</option>
-    </select>
-    <select id="instrumentFilter">
-      <option value="">All Instruments</option>
-    </select>
-  </section>
+<h1>Library of Important Jazz Musicians</h1>
 
-  <section class="container" id="musiciansContainer">
-    <!-- Musician cards will be added here -->
-  </section>
+<div class="filters">
+  <select id="eraFilter">
+    <option value="">Filter by Era</option>
+  </select>
+  <select id="instrumentFilter">
+    <option value="">Filter by Instrument/Role</option>
+  </select>
+  <select id="genreFilter">
+    <option value="">Filter by Genre/Style</option>
+  </select>
+</div>
 
-  <footer>
-    Built by York Music Forum – Jazz Education, Built Around You
-  </footer>
+<div id="musicians"></div>
 
-  <script>
-    async function loadCSV(path) {
-      const response = await fetch(path);
-      const text = await response.text();
-      const lines = text.split("\n").filter(line => line.trim().length > 0);
-      const headers = lines[0].split(",").map(h => h.trim().replace(/"/g, ""));
-      return lines.slice(1).map(line => {
-        const values = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.trim().replace(/^"|"$/g, ""));
-        const entry = {};
-        headers.forEach((h, i) => entry[h] = values[i]);
-        return entry;
-      });
-    }
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script>
+  async function loadCSV() {
+    const response = await fetch('data/important_jazz_musicians_batch_1.csv');
+    const csvText = await response.text();
 
-    function populateFilterOptions(data, key, selectId) {
-      const options = [...new Set(data.map(d => d[key]).filter(Boolean))].sort();
-      const select = document.getElementById(selectId);
-      options.forEach(opt => {
-        const option = document.createElement("option");
-        option.value = opt;
-        option.textContent = opt;
-        select.appendChild(option);
-      });
-    }
-
-    function createCard(musician) {
-      const card = document.createElement("div");
-      card.className = "card";
-      card.innerHTML = `
-        <h3>${musician.Name}</h3>
-        <p><strong>Instrument/Role:</strong> ${musician["Instrument/Role"]}</p>
-        <p><strong>Genre/Style:</strong> ${musician["Genre/Style"]}</p>
-        <p><strong>Era:</strong> ${musician.Era}</p>
-        <p>${musician.Description}</p>
-        <p><strong>Notable Recordings:</strong> ${musician["Notable Recordings"]}</p>
-        ${musician["Spotify Link"] ? `<a class="spotify" href="${musician["Spotify Link"]}" target="_blank">Listen on Spotify</a>` : ""}
-      `;
-      return card;
-    }
-
-    function filterAndDisplay(data) {
-      const era = document.getElementById("eraFilter").value;
-      const instrument = document.getElementById("instrumentFilter").value;
-      const genre = document.getElementById("genreFilter").value;
-
-      const container = document.getElementById("musiciansContainer");
-      container.innerHTML = "";
-
-      const filtered = data.filter(d =>
-        (!era || d.Era === era) &&
-        (!instrument || d["Instrument/Role"] === instrument) &&
-        (!genre || d["Genre/Style"] === genre)
-      );
-
-      filtered.forEach(musician => {
-        const card = createCard(musician);
-        container.appendChild(card);
-      });
-    }
-
-    document.addEventListener("DOMContentLoaded", async () => {
-      const musicians = await loadCSV("data/important_jazz_musicians_batch_1_cleaned.csv");
-
-      populateFilterOptions(musicians, "Era", "eraFilter");
-      populateFilterOptions(musicians, "Instrument/Role", "instrumentFilter");
-      populateFilterOptions(musicians, "Genre/Style", "genreFilter");
-
-      document.querySelectorAll("select").forEach(sel => {
-        sel.addEventListener("change", () => filterAndDisplay(musicians));
-      });
-
-      filterAndDisplay(musicians);
+    Papa.parse(csvText, {
+      header: true,
+      skipEmptyLines: true,
+      complete: function(results) {
+        const data = results.data;
+        displayMusicians(data);
+        populateFilters(data);
+      }
     });
-  </script>
+  }
+
+  function displayMusicians(data) {
+    const container = document.getElementById('musicians');
+    container.innerHTML = '';
+    data.forEach(musician => {
+      if (
+        filterMatch(musician.Era, 'eraFilter') &&
+        filterMatch(musician['Instrument/Role'], 'instrumentFilter') &&
+        filterMatch(musician['Genre/Style'], 'genreFilter')
+      ) {
+        const div = document.createElement('div');
+        div.className = 'musician';
+        div.innerHTML = `
+          <h2>${musician.Name}</h2>
+          <p><strong>Instrument/Role:</strong> ${musician['Instrument/Role']}</p>
+          <p><strong>Genre/Style:</strong> ${musician['Genre/Style']}</p>
+          <p><strong>Era:</strong> ${musician.Era}</p>
+          <p>${musician.Description}</p>
+          <p><strong>Notable Recordings:</strong> ${musician['Notable Recordings']}</p>
+          ${musician['Spotify Link'] ? `<p class="spotify"><a href="${musician['Spotify Link']}" target="_blank">Listen on Spotify</a></p>` : ''}
+        `;
+        container.appendChild(div);
+      }
+    });
+  }
+
+  function populateFilters(data) {
+    const eras = new Set();
+    const instruments = new Set();
+    const genres = new Set();
+
+    data.forEach(musician => {
+      if (musician.Era) eras.add(musician.Era);
+      if (musician['Instrument/Role']) instruments.add(musician['Instrument/Role']);
+      if (musician['Genre/Style']) genres.add(musician['Genre/Style']);
+    });
+
+    populateFilter('eraFilter', eras);
+    populateFilter('instrumentFilter', instruments);
+    populateFilter('genreFilter', genres);
+
+    document.getElementById('eraFilter').addEventListener('change', () => displayMusicians(data));
+    document.getElementById('instrumentFilter').addEventListener('change', () => displayMusicians(data));
+    document.getElementById('genreFilter').addEventListener('change', () => displayMusicians(data));
+  }
+
+  function populateFilter(id, values) {
+    const select = document.getElementById(id);
+    Array.from(values).sort().forEach(value => {
+      const option = document.createElement('option');
+      option.value = value;
+      option.textContent = value;
+      select.appendChild(option);
+    });
+  }
+
+  function filterMatch(value, filterId) {
+    const filter = document.getElementById(filterId).value;
+    return !filter || value === filter;
+  }
+
+  loadCSV();
+</script>
+
 </body>
 </html>
-  
